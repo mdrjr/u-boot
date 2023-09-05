@@ -302,14 +302,13 @@ int board_late_init(void)
 #endif
 	vpp_init();
 
+	check_hotkey();
+
+	if((get_bootmode() != BOOTMODE_NORMAL) || (board_check_power() < 0)) {
 #ifdef CONFIG_AML_LCD
-	lcd_probe();
+		gou_init_lcd();
 #endif
-	/* boot logo display - 1080p60hz */
-#ifdef CONFIG_AML_LCD
-	gou_display_env_init();
-	gou_bmp_display(DISP_LOGO);
-#endif
+	}
 
 	setenv("variant", "gou");
 	board_set_dtbfile("meson64_odroid%s.dtb");

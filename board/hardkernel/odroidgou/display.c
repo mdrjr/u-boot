@@ -14,6 +14,9 @@
 #include <vsprintf.h>
 #include <linux/kernel.h>
 #include <version.h>
+#ifdef CONFIG_AML_LCD
+#include <amlogic/aml_lcd.h>
+#endif
 
 #include <../odroid-common/odroid-common.h>
 #include "display.h"
@@ -28,6 +31,13 @@ static int boot_partition(void)
 		return 1;
 
 	return -1;
+}
+
+void gou_init_lcd(void)
+{
+		lcd_probe();
+		gou_display_env_init();
+		gou_bmp_display(DISP_LOGO);
 }
 
 int gou_display_env_init(void)

@@ -199,6 +199,11 @@ int board_check_power(void)
 	printf("PWRON source : %d\n",pwron_src);
 
 	if ((pwron_src != PWRON_KEY) && (bootmode == BOOTMODE_NORMAL)) {
+		if((pwron_src == PWRON_USB) && (get_battery_cap() > 0))
+			return 0;
+		else
+			gou_init_lcd();
+		
 		/* RK817 BOOST, OTG_POWER(USB A-type VBUS) disable */
 		rk817_i2c_write(RK817_POWER_EN3, 0xf0);
 		printf("battery charge state\n");
@@ -219,12 +224,15 @@ int board_check_power(void)
 			charger_led_bilnk(0);
 			if ( offset < DISP_BATT_3)
 				gou_bmp_display(offset+1);
-			else gou_bmp_display(offset);
+			else 
+				gou_bmp_display(offset);
+
 			mdelay(750);
 			charger_led_bilnk(0);
 
 			if(check_charge_exit_key())
 				break;
+
 			if(!is_charging())
 				run_command("poweroff", 0);
 		}

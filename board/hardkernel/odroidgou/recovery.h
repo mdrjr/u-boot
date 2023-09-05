@@ -30,6 +30,7 @@
 
 int board_check_recovery(void);
 int get_bootmode(void);
+void check_hotkey(void);
 
 #endif
 

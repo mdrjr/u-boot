@@ -32,6 +32,6 @@ enum disp_index_e {
 
 extern int gou_display_env_init(void);
 extern int gou_bmp_display(unsigned idx);
-
+extern void gou_init_lcd(void);
 #endif
 

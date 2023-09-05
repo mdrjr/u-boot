@@ -30,7 +30,7 @@ int boot_device(void)
 	return -1;
 }
 
-int check_hotkey(void)
+void check_hotkey(void)
 {
 	int left1,left2,right1,right2;
 	int boot_mode = 0;
@@ -61,7 +61,19 @@ int check_hotkey(void)
 		boot_mode = BOOTMODE_NORMAL;
 		printf("bootmode : Nomal boot. \n");
 	}
-	return boot_mode;
+
+	switch (boot_mode) {
+		case BOOTMODE_RECOVERY :
+			setenv("bootmode", "recovery");
+		break;
+		case BOOTMODE_TEST :
+			setenv("bootmode", "test");
+		break;
+		case BOOTMODE_NORMAL :
+		default :
+			setenv("bootmode", "normal");
+		break;
+	}
 }
 
 
@@ -78,7 +90,7 @@ int board_check_recovery(void)
 			goto recovery;
 		}
 	}
-	boot_mode = check_hotkey();
+	boot_mode = get_bootmode();
 	
 	if (boot_mode != BOOTMODE_NORMAL) {
 		if (board_check_odroidbios(dev) == 0) {
@@ -89,20 +101,6 @@ int board_check_recovery(void)
 			run_command("mmc dev 0", 0);
 		} else return -1;
 	}
-	
-	switch (boot_mode) {
-		case BOOTMODE_RECOVERY :
-			setenv("bootmode", "recovery");
-		break;
-		case BOOTMODE_TEST :
-			setenv("bootmode", "test");
-		break;
-		case BOOTMODE_NORMAL :
-		default :
-			setenv("bootmode", "normal");
-		break;
-	}
-
 recovery:
 	return 0;
 }
@@ -116,7 +114,7 @@ int get_bootmode(void)
 	else if (!strcmp("test", pmode)) ret = BOOTMODE_TEST;
 	else if (!strcmp("recovery", pmode)) ret = BOOTMODE_RECOVERY;
 	else ret = BOOTMODE_NORMAL;
-		
+
 	return ret;
 }
 
